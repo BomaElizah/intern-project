@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/auth.php';
+require_csrf();
+
 include 'db_connect.php';
 include 'send_notification.php';
 include 'audit_log.php';

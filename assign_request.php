@@ -1,4 +1,9 @@
 <?php
+require_once __DIR__ . '/auth.php';
+require_auth();
+require_role([ROLE_SUPERVISOR, ROLE_ADMIN]);
+require_csrf();
+
 session_start();
 include 'db_connect.php';
 include 'send_notification.php';
