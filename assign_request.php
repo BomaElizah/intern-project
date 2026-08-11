@@ -3,12 +3,22 @@ session_start();
 include 'db_connect.php';
 include 'send_notification.php';
 include 'audit_log.php';
+include 'status_history.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $request_id = $_POST['request_id'];
     $technician_id = $_POST['technician'];
     $due_date = $_POST['due_date'];
     $supervisor_id = $_SESSION['user_id'];
+
+    $oldStatus = 'N/A';
+    $statusStmt = $conn->prepare("SELECT status FROM maintenance_requests WHERE request_id=?");
+    $statusStmt->bind_param("i", $request_id);
+    $statusStmt->execute();
+    $statusResult = $statusStmt->get_result();
+    if ($statusRow = $statusResult->fetch_assoc()) {
+        $oldStatus = $statusRow['status'];
+    }
 
     $stmt = $conn->prepare("INSERT INTO assignments (request_id, technician_id, assigned_by, due_date, is_current) VALUES (?, ?, ?, ?, TRUE)");
     $stmt->bind_param("iiis", $request_id, $technician_id, $supervisor_id, $due_date);
@@ -17,6 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $update = $conn->prepare("UPDATE maintenance_requests SET status='Assigned' WHERE request_id=?");
         $update->bind_param("i", $request_id);
         $update->execute();
+
+        recordStatusHistory($request_id, $oldStatus, 'Assigned', $supervisor_id, 'Supervisor assigned request');
 
         // Notify technician
         sendNotification($technician_id, $request_id, "You have been assigned a new request.", "Dashboard");

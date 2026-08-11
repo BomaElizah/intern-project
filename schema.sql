@@ -55,7 +55,7 @@ CREATE TABLE maintenance_requests (
   room_id INT,
   category_id INT NOT NULL,
   priority ENUM('Low','Medium','High','Urgent') NOT NULL,
-  status ENUM('Submitted','Assigned','Pending','Completed','Rejected') DEFAULT 'Submitted',
+  status ENUM('Submitted','Assigned','In Progress','Paused','Pending','Completed','Rejected') DEFAULT 'Submitted',
   submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   completed_at TIMESTAMP NULL,
   FOREIGN KEY (requester_id) REFERENCES users(user_id),

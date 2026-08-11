@@ -3,16 +3,33 @@ session_start();
 include 'db_connect.php';
 include 'send_notification.php';
 include 'audit_log.php';
+include 'status_history.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $request_id = $_POST['request_id'];
     $status = $_POST['status'];
     $technician_id = $_SESSION['user_id'];
 
-    $stmt = $conn->prepare("UPDATE maintenance_requests SET status=? WHERE request_id=?");
-    $stmt->bind_param("si", $status, $request_id);
+    $oldStatus = 'N/A';
+    $statusStmt = $conn->prepare("SELECT status FROM maintenance_requests WHERE request_id=?");
+    $statusStmt->bind_param("i", $request_id);
+    $statusStmt->execute();
+    $statusResult = $statusStmt->get_result();
+    if ($statusRow = $statusResult->fetch_assoc()) {
+        $oldStatus = $statusRow['status'];
+    }
+
+    if ($status === 'Completed') {
+        $stmt = $conn->prepare("UPDATE maintenance_requests SET status=?, completed_at=NOW() WHERE request_id=?");
+        $stmt->bind_param("si", $status, $request_id);
+    } else {
+        $stmt = $conn->prepare("UPDATE maintenance_requests SET status=? WHERE request_id=?");
+        $stmt->bind_param("si", $status, $request_id);
+    }
 
     if ($stmt->execute()) {
+        recordStatusHistory($request_id, $oldStatus, $status, $technician_id, "Technician updated status");
+
         // Notify requester
         $reqStmt = $conn->prepare("SELECT requester_id FROM maintenance_requests WHERE request_id=?");
         $reqStmt->bind_param("i", $request_id);
