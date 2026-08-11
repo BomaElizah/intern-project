@@ -3,6 +3,7 @@ session_start();
 include 'db_connect.php';
 include 'send_notification.php';
 include 'audit_log.php';
+include 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $request_id = $_POST['request_id'];
@@ -10,11 +11,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $comment = $_POST['comment'];
 
     // Handle file uploads with validation and safe storage
-    $allowed_ext = ['jpg','jpeg','png','pdf'];
-    $max_size = 5 * 1024 * 1024; // 5 MB
+    $allowed_ext = ALLOWED_UPLOAD_EXT;
+    $max_size = MAX_UPLOAD_BYTES;
 
-    // Determine upload directory relative to this script and ensure it exists
-    $upload_dir = __DIR__ . '/../assets/uploads/';
+    // Determine upload directory and ensure it exists
+    $upload_dir = get_upload_dir();
     if (!is_dir($upload_dir)) {
         if (!mkdir($upload_dir, 0755, true)) {
             http_response_code(500);
@@ -70,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         // Store web-accessible path in the DB (relative to project root)
-        $dbPath = 'assets/uploads/' . $safeName;
+        $dbPath = get_upload_url_base() . $safeName;
         $stmt = $conn->prepare("INSERT INTO attachments (request_id, uploaded_by, file_path, attachment_stage) VALUES (?, ?, ?, ?)");
         $stmt->bind_param("iiss", $request_id, $technician_id, $dbPath, $stage);
         if ($stmt->execute()) {
