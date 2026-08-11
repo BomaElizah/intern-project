@@ -1,7 +1,26 @@
 <?php
 session_start();
+if (empty($_SESSION['user_id'])) {
+    header('Location: login.html');
+    exit;
+}
 include 'db_connect.php';
 include 'status_history.php';
+
+$role_id = $_SESSION['role_id'] ?? null;
+$homeLink = 'dashboard_student.html';
+$homeText = 'Back to Dashboard';
+
+if ($role_id == 2) {
+    $homeLink = 'dashboard_technician.html';
+    $homeText = 'Back to Technician Dashboard';
+} elseif ($role_id == 3) {
+    $homeLink = 'dashboard_supervisor.html';
+    $homeText = 'Back to Supervisor Dashboard';
+} elseif ($role_id == 4) {
+    $homeLink = 'dashboard_admin.html';
+    $homeText = 'Back to Admin Dashboard';
+}
 
 $request_id = null;
 $historyResult = null;
@@ -13,14 +32,24 @@ if (isset($_GET['request_id'])) {
     if ($request_id <= 0) {
         $error = 'Please provide a valid request ID.';
     } else {
-        $stmt = $conn->prepare("SELECT request_id, title, description, status, submitted_at FROM maintenance_requests WHERE request_id=?");
+        $stmt = $conn->prepare("SELECT request_id, title, description, status, submitted_at, requester_id FROM maintenance_requests WHERE request_id=?");
         $stmt->bind_param("i", $request_id);
         $stmt->execute();
         $requestResult = $stmt->get_result();
 
         $requestRow = $requestResult->fetch_assoc();
         if ($requestRow) {
-            $historyResult = getRequestStatusHistory($request_id);
+            $currentUserId = $_SESSION['user_id'] ?? null;
+
+            $isRequester = ($currentUserId && $currentUserId == $requestRow['requester_id']);
+            $isStaffViewer = in_array($role_id, [2, 3, 4, 5, 6], true);
+
+            if (!$isRequester && !$isStaffViewer) {
+                $error = 'You are not authorized to view this request history.';
+                $requestRow = null;
+            } else {
+                $historyResult = getRequestStatusHistory($request_id);
+            }
         } else {
             $error = 'Request not found.';
         }
@@ -40,7 +69,7 @@ if (isset($_GET['request_id'])) {
   <header class="header">
     <h1>Request History</h1>
     <nav>
-      <a href="dashboard_student.html">Back to Dashboard</a>
+      <a href="<?php echo htmlspecialchars($homeLink); ?>"><?php echo htmlspecialchars($homeText); ?></a>
       <a href="index.html">Logout</a>
     </nav>
   </header>
