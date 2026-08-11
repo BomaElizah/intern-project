@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard - WPU MRS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <h1>WPU Maintenance Request System</h1>
+    <nav>
+      <a href="dashboard_student.html" class="active">Dashboard</a>
+      <a href="index.html">Logout</a>
+    </nav>
+  </header>
+
+  <main class="dashboard-container">
+    <!-- Submit Request -->
+    <section class="submit-request">
+      <h2>Submit Maintenance Request</h2>
+      <form action="submit_request.php" method="POST" enctype="multipart/form-data">
+        <label for="title">Title</label>
+        <input type="text" id="title" name="title" placeholder="Short issue title" required>
+
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="4" placeholder="Describe the issue in detail" required></textarea>
+
+        <label for="building">Building</label>
+        <select id="building" name="building" required>
+          <option value="">Select Building</option>
+          <option value="Science Block">Science Block</option>
+          <option value="Main Lecture Hall">Main Lecture Hall</option>
+          <option value="Dormitory A">Dormitory A</option>
+        </select>
+
+        <label for="room">Room Number</label>
+        <input type="text" id="room" name="room" placeholder="e.g. B204">
+
+        <label for="category">Category</label>
+        <select id="category" name="category" required>
+          <option value="">Select Category</option>
+          <option value="Electrical">Electrical</option>
+          <option value="Plumbing">Plumbing</option>
+          <option value="Air Conditioning">Air Conditioning</option>
+          <option value="Furniture">Furniture</option>
+          <option value="IT Equipment">IT Equipment</option>
+          <option value="Building Repair">Building Repair</option>
+        </select>
+
+        <label for="priority">Priority</label>
+        <select id="priority" name="priority" required>
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+          <option value="Urgent">Urgent</option>
+        </select>
+
+        <label for="attachment">Upload Photo</label>
+        <input type="file" id="attachment" name="attachment">
+
+        <button type="submit" class="btn-primary">Submit Request</button>
+      </form>
+    </section>
+
+    <!-- My Requests -->
+    <section class="my-requests">
+      <h2>My Requests</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Submitted</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Example row -->
+          <tr>
+            <td>#10245</td>
+            <td>AC Not Working</td>
+            <td>Air Conditioning</td>
+            <td><span class="status in-progress">In Progress</span></td>
+            <td>2026-08-05</td>
+            <td><a href="#">Track</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

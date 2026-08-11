@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supervisor Dashboard - WPU MRS</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="header">
+    <h1>WPU Maintenance Request System</h1>
+    <nav>
+      <a href="dashboard_supervisor.html" class="active">Supervisor Dashboard</a>
+      <a href="../index.html">Logout</a>
+    </nav>
+  </header>
+
+  <main class="dashboard-container">
+    <!-- View All Requests -->
+    <section class="all-requests">
+      <h2>All Maintenance Requests</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Requester</th>
+            <th>Assigned Technician</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Example row -->
+          <tr>
+            <td>#10245</td>
+            <td>AC Not Working</td>
+            <td>Air Conditioning</td>
+            <td><span class="status submitted">Submitted</span></td>
+            <td>John Doe</td>
+            <td>Unassigned</td>
+            <td>
+              <button class="btn-primary">Assign</button>
+              <button class="btn-secondary">Reassign</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Assign/Reassign Jobs -->
+    <section class="assign-job">
+      <h2>Assign Request</h2>
+      <form action="../backend/assign_request.php" method="POST">
+        <label for="request_id">Request ID</label>
+        <input type="text" id="request_id" name="request_id" placeholder="Enter Request ID" required>
+
+        <label for="technician">Technician</label>
+        <select id="technician" name="technician" required>
+          <option value="">Select Technician</option>
+          <option value="1">Alice Smith</option>
+          <option value="2">Bob Johnson</option>
+        </select>
+
+        <label for="due_date">Due Date</label>
+        <input type="date" id="due_date" name="due_date">
+
+        <button type="submit" class="btn-primary">Assign</button>
+      </form>
+    </section>
+
+    <!-- Generate Reports -->
+    <section class="reports">
+      <h2>Generate Reports</h2>
+      <form action="../backend/generate_report.php" method="POST">
+        <label for="report_type">Report Type</label>
+        <select id="report_type" name="report_type" required>
+          <option value="monthly">Monthly</option>
+          <option value="building">By Building</option>
+          <option value="category">By Category</option>
+          <option value="technician">By Technician</option>
+        </select>
+
+        <button type="submit" class="btn-primary">Generate</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

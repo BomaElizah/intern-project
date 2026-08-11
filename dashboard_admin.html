@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - WPU MRS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <h1>WPU Maintenance Request System</h1>
+    <nav>
+      <a href="dashboard_admin.html" class="active">Admin Dashboard</a>
+      <a href="../index.html">Logout</a>
+    </nav>
+  </header>
+
+  <main class="dashboard-container">
+    <!-- Manage Users -->
+    <section class="manage-users">
+      <h2>Manage Users</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Example row -->
+          <tr>
+            <td>U001</td>
+            <td>Jane Doe</td>
+            <td>jane.doe@wpu.ac.pg</td>
+            <td>Student</td>
+            <td>Active</td>
+            <td>
+              <button class="btn-secondary">Deactivate</button>
+              <button class="btn-primary">Edit</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Manage Categories -->
+    <section class="manage-categories">
+      <h2>Manage Categories</h2>
+      <form action="manage_categories.php" method="POST">
+        <label for="category_name">Category Name</label>
+        <input type="text" id="category_name" name="category_name" placeholder="e.g. Electrical" required>
+        <button type="submit" class="btn-primary">Add Category</button>
+      </form>
+      <ul class="category-list">
+        <li>Electrical <button class="btn-secondary">Delete</button></li>
+        <li>Plumbing <button class="btn-secondary">Delete</button></li>
+      </ul>
+    </section>
+
+    <!-- System Settings -->
+    <section class="system-settings">
+      <h2>System Settings</h2>
+      <form action="../backend/system_settings.php" method="POST">
+        <label for="setting">Setting</label>
+        <select id="setting" name="setting">
+          <option value="email_notifications">Enable Email Notifications</option>
+          <option value="dashboard_alerts">Enable Dashboard Alerts</option>
+        </select>
+        <button type="submit" class="btn-primary">Update</button>
+      </form>
+    </section>
+
+    <!-- Audit Logs -->
+    <section class="audit-logs">
+      <h2>Audit Logs</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Log ID</th>
+            <th>User</th>
+            <th>Action</th>
+            <th>Entity</th>
+            <th>Timestamp</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Example row -->
+          <tr>
+            <td>AL001</td>
+            <td>Admin</td>
+            <td>Deactivated user</td>
+            <td>users</td>
+            <td>2026-08-05 14:32</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

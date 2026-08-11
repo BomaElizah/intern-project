@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Technician Dashboard - WPU MRS</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="header">
+    <h1>WPU Maintenance Request System</h1>
+    <nav>
+      <a href="dashboard_technician.html" class="active">Technician Dashboard</a>
+      <a href="../index.html">Logout</a>
+    </nav>
+  </header>
+
+  <main class="dashboard-container">
+    <!-- Assigned Jobs -->
+    <section class="assigned-jobs">
+      <h2>My Assigned Jobs</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Due Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Example row -->
+          <tr>
+            <td>#10245</td>
+            <td>AC Not Working</td>
+            <td>Air Conditioning</td>
+            <td>High</td>
+            <td><span class="status assigned">Assigned</span></td>
+            <td>2026-08-10</td>
+            <td>
+              <button class="btn-primary">Start</button>
+              <button class="btn-secondary">Pause</button>
+              <button class="btn-success">Complete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Update Job Progress -->
+    <section class="update-progress">
+      <h2>Update Job Progress</h2>
+      <form action="../backend/update_status.php" method="POST">
+        <label for="request_id">Request ID</label>
+        <input type="text" id="request_id" name="request_id" placeholder="Enter Request ID" required>
+
+        <label for="status">Status</label>
+        <select id="status" name="status" required>
+          <option value="In Progress">In Progress</option>
+          <option value="Paused">Paused</option>
+          <option value="Completed">Completed</option>
+        </select>
+
+        <button type="submit" class="btn-primary">Update Status</button>
+      </form>
+    </section>
+
+    <!-- Upload Work Evidence -->
+    <section class="work-evidence">
+      <h2>Upload Work Evidence</h2>
+      <form action="../backend/upload_evidence.php" method="POST" enctype="multipart/form-data">
+        <label for="request_id">Request ID</label>
+        <input type="text" id="request_id" name="request_id" required>
+
+        <label for="before_photo">Before Photo</label>
+        <input type="file" id="before_photo" name="before_photo">
+
+        <label for="after_photo">After Photo</label>
+        <input type="file" id="after_photo" name="after_photo">
+
+        <label for="comment">Technician Comment</label>
+        <textarea id="comment" name="comment" rows="3" placeholder="Add notes about the work"></textarea>
+
+        <button type="submit" class="btn-primary">Upload Evidence</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>
