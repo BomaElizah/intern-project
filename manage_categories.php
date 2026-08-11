@@ -1,5 +1,6 @@
 <?php
-session_start();
+require_once __DIR__ . '/auth.php';
+require_role([ROLE_ADMIN]);
 include 'db_connect.php';
 
 // Add Category

@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/auth.php';
+require_role([ROLE_SUPERVISOR, ROLE_ADMIN]);
+
 session_start();
 include 'db_connect.php';
 include 'send_notification.php';

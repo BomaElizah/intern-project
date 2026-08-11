@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reports and Analytics - WPU MRS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <h1>WPU Maintenance Request System</h1>
+    <nav>
+      <a href="dashboard_admin.php">Dashboard</a>
+      <a href="generate_report.php" class="active">Reports</a>
+      <a href="index.html">Logout</a>
+    </nav>
+  </header>
+
+  <main class="report-shell">
+    <section class="report-panel">
+      <h2>Reporting and Analytics</h2>
+      <p>View maintenance request volume and distribution across the current system.</p>
+
+      <div class="report-grid">
+        <article class="report-metric">
+          <span>Total Requests</span>
+          <strong>{{TOTAL_REQUESTS}}</strong>
+          <small>Maintenance records</small>
+        </article>
+        <article class="report-metric">
+          <span>Open Requests</span>
+          <strong>{{OPEN_REQUESTS}}</strong>
+          <small>Submitted or assigned</small>
+        </article>
+        <article class="report-metric">
+          <span>Completed</span>
+          <strong>{{COMPLETED_REQUESTS}}</strong>
+          <small>Finished jobs</small>
+        </article>
+      </div>
+
+      <h3>Generate a Report</h3>
+      <form action="generate_report.php" method="POST">
+        <label for="report_type">Report Type</label>
+        <select id="report_type" name="report_type" required>
+          <option value="monthly">Monthly Overview</option>
+          <option value="building">By Building</option>
+          <option value="category">By Category</option>
+          <option value="technician">By Technician</option>
+        </select>
+
+        <button type="submit" class="btn-primary">Generate</button>
+      </form>
+
+      <section class="report-table">
+        <h3>Report Results</h3>
+        <div>
+          {{REPORT_RESULTS}}
+        </div>
+      </section>
+    </section>
+  </main>
+</body>
+</html>
