@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $request_id = $conn->insert_id;
 
         // Notify requester
-        sendNotification($requester_id, $request_id, "Your request has been submitted.", "Dashboard");
+        sendNotification($requester_id, $request_id, "Your request has been submitted.", "Email");
 
         // Audit log
         writeAuditLog($requester_id, "Submitted maintenance request", "maintenance_requests", $request_id, $_SERVER['REMOTE_ADDR']);

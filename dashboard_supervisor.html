@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supervisor Dashboard - WPU MRS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <h1>WPU Maintenance Request System</h1>
+    <nav>
+      <a href="dashboard_supervisor.html" class="active">Supervisor Dashboard</a>
+      <a href="notifications.php">Notifications</a>
+      <a href="index.html">Logout</a>
+    </nav>
+  </header>
+
+  <main class="dashboard-container">
+    <section class="submit-request">
+      <h2>Pending Requests</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Requester</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>#10245</td>
+            <td>AC Not Working</td>
+            <td>Jane Doe</td>
+            <td>Submitted</td>
+            <td><a href="assign_request.php">Assign</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="manage-categories">
+      <h2>Assign Technician</h2>
+      <form action="assign_request.php" method="POST">
+        <label for="request_id">Request ID</label>
+        <input type="text" id="request_id" name="request_id" required>
+
+        <label for="technician">Technician</label>
+        <input type="text" id="technician" name="technician" placeholder="Technician ID" required>
+
+        <label for="due_date">Due Date</label>
+        <input type="date" id="due_date" name="due_date">
+
+        <button type="submit" class="btn-primary">Assign</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

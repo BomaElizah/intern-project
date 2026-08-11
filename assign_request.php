@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $update->execute();
 
         // Notify technician
-        sendNotification($technician_id, $request_id, "You have been assigned a new request.", "Dashboard");
+        sendNotification($technician_id, $request_id, "You have been assigned a new request.", "Email");
 
         // Notify requester
         $reqStmt = $conn->prepare("SELECT requester_id FROM maintenance_requests WHERE request_id=?");

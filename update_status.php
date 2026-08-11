@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $reqStmt->execute();
         $reqResult = $reqStmt->get_result();
         if ($reqRow = $reqResult->fetch_assoc()) {
-            sendNotification($reqRow['requester_id'], $request_id, "Your request status has been updated to $status.", "Dashboard");
+            sendNotification($reqRow['requester_id'], $request_id, "Your request status has been updated to $status.", "Email");
         }
 
         // Audit log
