@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reporting and Analytics - WPU MRS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <h1>WPU Maintenance Request System</h1>
+    <nav>
+      <a href="dashboard_admin.php">Dashboard</a>
+      <a href="generate_report.php" class="active">Reports</a>
+      <a href="index.html">Logout</a>
+    </nav>
+  </header>
+
+  <main class="report-shell">
+    <section class="report-panel">
+      <h2>Reporting and Analytics</h2>
+      <p>Maintenance request reporting and summary analytics.</p>
+
+      <div class="report-grid">
+        <article class="report-metric">
+          <span>Total Requests</span>
+          <strong>{{TOTAL_REQUESTS}}</strong>
+          <small>All maintenance records</small>
+        </article>
+        <article class="report-metric">
+          <span>Open Requests</span>
+          <strong>{{OPEN_REQUESTS}}</strong>
+          <small>Submitted / assigned / pending</small>
+        </article>
+        <article class="report-metric">
+          <span>Completed</span>
+          <strong>{{COMPLETED_REQUESTS}}</strong>
+          <small>Completed jobs</small>
+        </article>
+      </div>
+
+      <section class="analytics-section">
+        <h3>Request Volume</h3>
+        <div class="chart-bars">
+          {{CHART_BARS}}
+        </div>
+      </section>
+
+      <section class="report-form-section">
+        <h3>Generate Reports</h3>
+        <form action="generate_report.php" method="POST">
+          <label for="report_type">Report Type</label>
+          <select id="report_type" name="report_type" required>
+            <option value="monthly">Monthly</option>
+            <option value="building">By Building</option>
+            <option value="category">By Category</option>
+            <option value="technician">By Technician</option>
+          </select>
+
+          <label for="export_format">Export Format</label>
+          <select id="export_format" name="export_format">
+            <option value="html">HTML View</option>
+            <option value="csv">CSV</option>
+            <option value="pdf">PDF</option>
+          </select>
+
+          <button type="submit" class="btn-primary">Generate</button>
+        </form>
+      </section>
+
+      <section class="report-table">
+        <h3>Report Results</h3>
+        <div>
+          {{REPORT_RESULTS}}
+        </div>
+      </section>
+    </section>
+  </main>
+</body>
+</html>
