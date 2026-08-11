@@ -1,6 +1,6 @@
 <?php
-session_start();
-include 'db_connect.php';
+include 'auth.php';
+requireRole(['Supervisor']);
 include 'send_notification.php';
 include 'audit_log.php';
 
@@ -10,6 +10,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $due_date = $_POST['due_date'];
     $supervisor_id = $_SESSION['user_id'];
 
+    // Mark any current assignment as no longer current
+    $closeStmt = $conn->prepare("UPDATE assignments SET is_current = FALSE WHERE request_id = ? AND is_current = TRUE");
+    $closeStmt->bind_param("i", $request_id);
+    $closeStmt->execute();
+
+    // Capture request status before assignment
+    $statusStmt = $conn->prepare("SELECT status FROM maintenance_requests WHERE request_id = ?");
+    $statusStmt->bind_param("i", $request_id);
+    $statusStmt->execute();
+    $statusResult = $statusStmt->get_result();
+    $oldStatus = 'Submitted';
+    if ($statusRow = $statusResult->fetch_assoc()) {
+        $oldStatus = $statusRow['status'];
+    }
+
     $stmt = $conn->prepare("INSERT INTO assignments (request_id, technician_id, assigned_by, due_date, is_current) VALUES (?, ?, ?, ?, TRUE)");
     $stmt->bind_param("iiis", $request_id, $technician_id, $supervisor_id, $due_date);
 
@@ -17,6 +32,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $update = $conn->prepare("UPDATE maintenance_requests SET status='Assigned' WHERE request_id=?");
         $update->bind_param("i", $request_id);
         $update->execute();
+
+        $historyStmt = $conn->prepare("INSERT INTO request_status_history (request_id, old_status, new_status, changed_by, remarks) VALUES (?, ?, 'Assigned', ?, ?)");
+        $remarks = "Assigned to technician ID $technician_id";
+        $historyStmt->bind_param("isis", $request_id, $oldStatus, $supervisor_id, $remarks);
+        $historyStmt->execute();
 
         // Notify technician
         sendNotification($technician_id, $request_id, "You have been assigned a new request.", "Dashboard");

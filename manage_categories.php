@@ -1,6 +1,6 @@
 <?php
-session_start();
-include 'db_connect.php';
+include 'auth.php';
+requireRole(['Administrator']);
 
 // Add Category
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['category_name'])) {

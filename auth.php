@@ -1,0 +1,75 @@
+<?php
+session_start();
+include 'db_connect.php';
+
+function requireLogin() {
+    if (empty($_SESSION['user_id'])) {
+        header('Location: login.html');
+        exit;
+    }
+}
+
+function getCurrentUser() {
+    global $conn;
+
+    if (empty($_SESSION['user_id'])) {
+        return null;
+    }
+
+    if (!empty($_SESSION['full_name']) && !empty($_SESSION['role_name'])) {
+        return [
+            'user_id' => $_SESSION['user_id'],
+            'full_name' => $_SESSION['full_name'],
+            'role_id' => $_SESSION['role_id'] ?? null,
+            'role_name' => $_SESSION['role_name'],
+        ];
+    }
+
+    $stmt = $conn->prepare(
+        "SELECT u.user_id, u.full_name, u.role_id, COALESCE(r.role_name, '') AS role_name
+         FROM users u
+         LEFT JOIN roles r ON u.role_id = r.role_id
+         WHERE u.user_id = ?"
+    );
+    $stmt->bind_param('i', $_SESSION['user_id']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($row = $result->fetch_assoc()) {
+        $_SESSION['full_name'] = $row['full_name'];
+        $_SESSION['role_id'] = $row['role_id'];
+        $_SESSION['role_name'] = $row['role_name'];
+
+        return [
+            'user_id' => $row['user_id'],
+            'full_name' => $row['full_name'],
+            'role_id' => $row['role_id'],
+            'role_name' => $row['role_name'],
+        ];
+    }
+
+    return null;
+}
+
+function requireRole($allowedRoles = []) {
+    $user = getCurrentUser();
+    if (!$user) {
+        header('Location: login.html');
+        exit;
+    }
+
+    $roleName = strtolower($user['role_name'] ?? '');
+    foreach ((array) $allowedRoles as $allowed) {
+        if (strtolower($allowed) === $roleName) {
+            return true;
+        }
+    }
+
+    header('HTTP/1.1 403 Forbidden');
+    echo 'Access denied.';
+    exit;
+}
+
+function e($value) {
+    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+}

@@ -1,6 +1,6 @@
 <?php
-session_start();
-include 'db_connect.php';
+include 'auth.php';
+requireLogin();
 include 'send_notification.php';
 include 'audit_log.php';
 
@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = $_POST['title'];
     $description = $_POST['description'];
     $building = $_POST['building'];
-    $room = $_POST['room'];
+    $room = isset($_POST['room']) && $_POST['room'] !== '' ? intval($_POST['room']) : null;
     $category = $_POST['category'];
     $priority = $_POST['priority'];
     $requester_id = $_SESSION['user_id'];

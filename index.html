@@ -4,22 +4,138 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WPU Maintenance Request System</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #eef3f8;
+      color: #102a43;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #edf2f7 0%, #e2e8f0 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 2rem 1rem;
+    }
+
+    header {
+      width: min(900px, 100%);
+      background: #003366;
+      color: #ffffff;
+      border-radius: 24px;
+      padding: 2rem 2.5rem;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.08);
+      text-align: left;
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      margin: 0 0 0.5rem;
+      font-size: clamp(2rem, 3vw, 2.6rem);
+      letter-spacing: -0.04em;
+    }
+
+    header h2 {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: #dfe7f2;
+    }
+
+    main {
+      width: min(760px, 100%);
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 26px;
+      padding: 2rem;
+      box-shadow: 0 24px 60px rgba(16, 42, 67, 0.08);
+      border: 1px solid rgba(16, 42, 67, 0.06);
+    }
+
+    .intro h3 {
+      margin: 0 0 0.75rem;
+      font-size: 1.6rem;
+      letter-spacing: -0.02em;
+      color: #0f3057;
+    }
+
+    .intro p {
+      margin: 0 0 1.75rem;
+      line-height: 1.75;
+      color: #475569;
+      font-size: 1rem;
+    }
+
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffb703;
+      color: #071e3d;
+      padding: 0.95rem 1.8rem;
+      border-radius: 999px;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 18px 40px rgba(0, 51, 102, 0.14);
+      transition: transform 0.2s ease, background-color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-1px);
+      background: #f4a300;
+    }
+
+    footer {
+      width: min(900px, 100%);
+      text-align: center;
+      font-size: 0.95rem;
+      color: #627d98;
+      padding: 1rem 0;
+    }
+
+    @media (max-width: 640px) {
+      header,
+      footer {
+        padding: 1.5rem;
+      }
+
+      .card {
+        padding: 1.5rem;
+      }
+
+      .intro h3 {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <header class="header">
+  <header>
     <h1>Western Pacific University</h1>
     <h2>Maintenance Request System</h2>
   </header>
 
-  <main class="home-container">
-    <section class="intro">
-      <p>Welcome to the WPU Maintenance Request System — your platform for reporting and tracking maintenance issues across campus.</p>
-      <a href="login.html" class="btn-primary">Login to Continue</a>
+  <main>
+    <section class="card intro">
+      <h3>Modern, secure support for campus maintenance requests.</h3>
+      <p>Welcome to the WPU Maintenance Request System — the central university platform for reporting, tracking, and resolving facility issues across campus with fast response coordination.</p>
+      <a href="login.php" class="cta-button">Login to Continue</a>
     </section>
   </main>
 
-  <footer class="footer">
+  <footer>
     <p>&copy; 2026 Western Pacific University | Developed by WPU ICT Department</p>
   </footer>
 </body>

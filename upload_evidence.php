@@ -1,6 +1,6 @@
 <?php
-session_start();
-include 'db_connect.php';
+include 'auth.php';
+requireRole(['Maintenance Officer', 'Technician']);
 include 'send_notification.php';
 include 'audit_log.php';
 
