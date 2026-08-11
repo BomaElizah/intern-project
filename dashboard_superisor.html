@@ -4,14 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Supervisor Dashboard - WPU MRS</title>
-  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="header">
     <h1>WPU Maintenance Request System</h1>
     <nav>
       <a href="dashboard_supervisor.html" class="active">Supervisor Dashboard</a>
-      <a href="../index.html">Logout</a>
+      <a href="notifications.php">Notifications</a>
+      <a href="reports.php">Reports</a>
+      <a href="index.html">Logout</a>
     </nav>
   </header>
 
@@ -52,7 +54,7 @@
     <!-- Assign/Reassign Jobs -->
     <section class="assign-job">
       <h2>Assign Request</h2>
-      <form action="../backend/assign_request.php" method="POST">
+      <form action="assign_request.php" method="POST">
         <label for="request_id">Request ID</label>
         <input type="text" id="request_id" name="request_id" placeholder="Enter Request ID" required>
 
@@ -73,7 +75,7 @@
     <!-- Generate Reports -->
     <section class="reports">
       <h2>Generate Reports</h2>
-      <form action="../backend/generate_report.php" method="POST">
+      <form action="reports.php" method="POST">
         <label for="report_type">Report Type</label>
         <select id="report_type" name="report_type" required>
           <option value="monthly">Monthly</option>

@@ -20,7 +20,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Audit log
             writeAuditLog($row['user_id'], "User logged in", "users", $row['user_id'], $_SERVER['REMOTE_ADDR']);
 
-            header("Location: ../pages/dashboard_student.html"); // adjust per role
+            $roleMap = [
+                1 => 'dashboard_student.html',
+                2 => 'dashboard_supervisor.html',
+                3 => 'dashboard_technician.html',
+                4 => 'dashboard_admin.html'
+            ];
+
+            $dashboard = $roleMap[$row['role_id']] ?? 'dashboard_student.html';
+            header("Location: {$dashboard}");
             exit();
         } else {
             echo "Invalid password.";
