@@ -137,9 +137,25 @@ $technicianCount = $conn->query(
 
     <section class="reports">
       <h2>Reports</h2>
-      <p>Use the admin report tools to generate request summaries.</p>
+      <p>Use the admin report tools to generate request summaries. <a href="reports.php">Open Reports</a></p>
     </section>
     </div>
   </main>
 </body>
 </html>
+<script src="csrf.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+  (function(){
+    const statusData = <?php echo json_encode(array_values($statusCounts)); ?>;
+    const statusLabels = <?php echo json_encode(array_keys($statusCounts)); ?>;
+    const ctx = document.createElement('canvas');
+    ctx.id = 'supervisorStatusChart';
+    document.querySelector('.dashboard-summary').appendChild(ctx);
+    new Chart(ctx.getContext('2d'), {
+      type: 'bar',
+      data: { labels: statusLabels, datasets: [{ label: 'Requests', data: statusData, backgroundColor: '#36A2EB' }] },
+      options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+  })();
+</script>

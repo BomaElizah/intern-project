@@ -1,4 +1,17 @@
 <?php
+// Security headers applied for PHP pages that include this file
+header('X-Frame-Options: SAMEORIGIN');
+header('X-Content-Type-Options: nosniff');
+header('Referrer-Policy: no-referrer-when-downgrade');
+
+// Content Security Policy (kept permissive for existing inline scripts and CDN usage)
+header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data:; connect-src 'self'; font-src 'self' https://fonts.gstatic.com;");
+
+// HSTS when running over HTTPS
+if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+    header('Strict-Transport-Security: max-age=63072000; includeSubDomains; preload');
+}
+
 session_start();
 include 'db_connect.php';
 

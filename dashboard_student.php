@@ -158,3 +158,22 @@ $requests = $requestsStmt->get_result();
   </main>
 </body>
 </html>
+<script src="csrf.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+  (function(){
+    const statusData = <?php echo json_encode(array_values($statusCounts)); ?>;
+    const statusLabels = <?php echo json_encode(array_keys($statusCounts)); ?>;
+    const ctx = document.createElement('canvas');
+    ctx.id = 'studentStatusChart';
+    document.querySelector('.dashboard-summary').appendChild(ctx);
+    new Chart(ctx.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: statusLabels,
+        datasets: [{ data: statusData, backgroundColor: ['#FF9F40','#36A2EB','#FF6384','#4BC0C0','#9966FF'] }]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    });
+  })();
+</script>

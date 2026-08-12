@@ -149,3 +149,19 @@ while ($row = $statusResult->fetch_assoc()) {
   </main>
 </body>
 </html>
+<script src="csrf.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+  (function(){
+    const statusData = <?php echo json_encode(array_values($statusCounts)); ?>;
+    const statusLabels = <?php echo json_encode(array_keys($statusCounts)); ?>;
+    const ctx = document.createElement('canvas');
+    ctx.id = 'technicianStatusChart';
+    document.querySelector('.dashboard-summary').appendChild(ctx);
+    new Chart(ctx.getContext('2d'), {
+      type: 'doughnut',
+      data: { labels: statusLabels, datasets: [{ data: statusData, backgroundColor: ['#36A2EB','#FF9F40','#FFCD56','#4BC0C0'] }] },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    });
+  })();
+</script>

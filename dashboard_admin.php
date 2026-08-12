@@ -125,6 +125,11 @@ while ($row = $statusResult->fetch_assoc()) {
       </ul>
     </section>
 
+    <section class="reports">
+      <h2>Reports</h2>
+      <p>Use the admin report tools to generate request summaries. <a href="reports.php">Open Reports</a></p>
+    </section>
+
     <section class="all-requests">
       <div class="section-header">
         <h2>All Requests</h2>
@@ -162,3 +167,19 @@ while ($row = $statusResult->fetch_assoc()) {
   </main>
 </body>
 </html>
+<script src="csrf.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+  (function(){
+    const statusData = <?php echo json_encode(array_values($statusCounts)); ?>;
+    const statusLabels = <?php echo json_encode(array_keys($statusCounts)); ?>;
+    const canvas = document.createElement('canvas');
+    canvas.id = 'adminStatusChart';
+    document.querySelector('.dashboard-summary').appendChild(canvas);
+    new Chart(canvas.getContext('2d'), {
+      type: 'doughnut',
+      data: { labels: statusLabels, datasets: [{ data: statusData, backgroundColor: ['#FF6384','#36A2EB','#FFCE56','#4BC0C0','#9966FF'] }] },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    });
+  })();
+</script>

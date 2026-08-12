@@ -2,10 +2,17 @@
 include 'db_connect.php';
 include 'send_notification.php';
 include 'audit_log.php';
+include 'rate_limit.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     include 'auth.php';
     requireCsrf();
+    $clientIp = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    $rlKey = 'forgot_ip_' . $clientIp;
+    if (isRateLimited($rlKey, 3, 3600)) {
+        echo "Too many requests. Please try again later.";
+        exit;
+    }
 
     $email = $_POST['email'];
 
@@ -32,8 +39,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Audit log
         writeAuditLog($user_id, "Requested password reset", "users", $user_id, $_SERVER['REMOTE_ADDR']);
 
+        // Register rate-limit attempt
+        registerAttempt($rlKey);
+
         echo "Password reset link has been sent to your email.";
     } else {
+        // Register rate-limit attempt to prevent enumeration
+        registerAttempt($rlKey);
         echo "No account found with that email.";
     }
 }
