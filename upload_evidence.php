@@ -4,6 +4,7 @@ requireRole(['Maintenance Officer', 'Technician']);
 include 'send_notification.php';
 include 'audit_log.php';
 include 'config.php';
+include 'status_history.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $request_id = $_POST['request_id'];
@@ -94,6 +95,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bind_param("iis", $request_id, $technician_id, $comment);
         $stmt->execute();
     }
+
+    // Record an audit/status history entry for the evidence upload (does not change request status)
+    $curStatusStmt = $conn->prepare("SELECT status FROM maintenance_requests WHERE request_id = ?");
+    $curStatusStmt->bind_param("i", $request_id);
+    $curStatusStmt->execute();
+    $curStatusRes = $curStatusStmt->get_result();
+    $currentStatus = 'Submitted';
+    if ($row = $curStatusRes->fetch_assoc()) {
+        $currentStatus = $row['status'];
+    }
+
+    recordStatusHistory($request_id, $currentStatus, $currentStatus, $technician_id, 'Technician uploaded evidence');
 
     // Notify requester
     $reqStmt = $conn->prepare("SELECT requester_id FROM maintenance_requests WHERE request_id=?");
