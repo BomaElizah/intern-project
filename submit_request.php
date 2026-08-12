@@ -7,6 +7,8 @@ include 'status_history.php';
 include 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    requireCsrf();
+
     $title = $_POST['title'];
     $description = $_POST['description'];
     $building = $_POST['building'];

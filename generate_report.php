@@ -2,6 +2,12 @@
 session_start();
 include 'db_connect.php';
 include 'audit_log.php';
+include 'auth.php';
+requireLogin();
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    requireCsrf();
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $report_type = $_POST['report_type'];
@@ -22,8 +28,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     $result = $conn->query($sql);
-    while ($row = $result->fetch_assoc()) {
-        echo implode(" | ", $row) . "<br>";
+
+    // CSV export if requested
+    $export = $_POST['export'] ?? null;
+    if ($export === 'csv') {
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="report_' . $report_type . '.csv"');
+        $out = fopen('php://output', 'w');
+        $first = true;
+        while ($row = $result->fetch_assoc()) {
+            if ($first) {
+                fputcsv($out, array_keys($row));
+                $first = false;
+            }
+            fputcsv($out, array_values($row));
+        }
+        fclose($out);
+        exit;
+    } else {
+        while ($row = $result->fetch_assoc()) {
+            echo implode(" | ", $row) . "<br>";
+        }
     }
 
     // Audit log

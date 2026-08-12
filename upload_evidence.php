@@ -7,6 +7,8 @@ include 'config.php';
 include 'status_history.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    requireCsrf();
+
     $request_id = $_POST['request_id'];
     $technician_id = $_SESSION['user_id'];
     $comment = $_POST['comment'];

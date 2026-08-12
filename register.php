@@ -4,6 +4,9 @@ include 'send_notification.php';
 include 'audit_log.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    include 'auth.php';
+    requireCsrf();
+
     $name       = $_POST['full_name'];
     $email      = $_POST['email'];
     $id_number  = $_POST['id_number'];

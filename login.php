@@ -4,6 +4,9 @@ include 'db_connect.php';
 include 'audit_log.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    include 'auth.php';
+    requireCsrf();
+
     $email = $_POST['email'];
     $password = $_POST['password'];
 

@@ -4,6 +4,9 @@ include 'send_notification.php';
 include 'audit_log.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    include 'auth.php';
+    requireCsrf();
+
     $token = $_POST['token'];
     $new_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 

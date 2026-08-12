@@ -4,6 +4,9 @@ include 'send_notification.php';
 include 'audit_log.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    include 'auth.php';
+    requireCsrf();
+
     $email = $_POST['email'];
 
     // Check if user exists

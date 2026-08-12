@@ -4,6 +4,7 @@ requireRole(['Administrator']);
 
 // Add Category
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['category_name'])) {
+    requireCsrf();
     $category_name = trim($_POST['category_name']);
 
     $stmt = $conn->prepare("INSERT INTO categories (category_name) VALUES (?)");
@@ -18,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['category_name'])) {
 
 // Delete Category
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_id'])) {
+    requireCsrf();
     $delete_id = $_POST['delete_id'];
 
     $stmt = $conn->prepare("DELETE FROM categories WHERE category_id=?");

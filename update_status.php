@@ -6,6 +6,8 @@ include 'audit_log.php';
 include 'status_history.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    requireCsrf();
+
     $request_id = $_POST['request_id'];
     $status = $_POST['status'];
     $technician_id = $_SESSION['user_id'];
