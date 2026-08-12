@@ -3,6 +3,7 @@ include 'auth.php';
 requireRole(['Maintenance Officer', 'Technician']);
 include 'send_notification.php';
 include 'audit_log.php';
+include 'status_history.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $request_id = $_POST['request_id'];
@@ -18,14 +19,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $oldStatus = $oldStatusRow['status'];
     }
 
-    $stmt = $conn->prepare("UPDATE maintenance_requests SET status=? WHERE request_id=?");
+    if ($status === 'Completed') {
+        $stmt = $conn->prepare("UPDATE maintenance_requests SET status=?, completed_at=NOW() WHERE request_id=?");
+    } else {
+        $stmt = $conn->prepare("UPDATE maintenance_requests SET status=? WHERE request_id=?");
+    }
     $stmt->bind_param("si", $status, $request_id);
 
     if ($stmt->execute()) {
-        $historyStmt = $conn->prepare("INSERT INTO request_status_history (request_id, old_status, new_status, changed_by, remarks) VALUES (?, ?, ?, ?, ?)");
-        $remarks = "Updated by technician.";
-        $historyStmt->bind_param("issis", $request_id, $oldStatus, $status, $technician_id, $remarks);
-        $historyStmt->execute();
+        recordStatusHistory($request_id, $oldStatus, $status, $technician_id, "Technician updated status");
 
         // Notify requester
         $reqStmt = $conn->prepare("SELECT requester_id FROM maintenance_requests WHERE request_id=?");

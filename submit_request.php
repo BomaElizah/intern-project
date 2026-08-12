@@ -3,6 +3,7 @@ include 'auth.php';
 requireLogin();
 include 'send_notification.php';
 include 'audit_log.php';
+include 'status_history.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = $_POST['title'];
@@ -18,6 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($stmt->execute()) {
         $request_id = $conn->insert_id;
+
+        recordStatusHistory($request_id, 'N/A', 'Submitted', $requester_id, 'Request created');
 
         // Notify requester
         sendNotification($requester_id, $request_id, "Your request has been submitted.", "Dashboard");

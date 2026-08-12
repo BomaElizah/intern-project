@@ -3,6 +3,7 @@ include 'auth.php';
 requireRole(['Supervisor']);
 include 'send_notification.php';
 include 'audit_log.php';
+include 'status_history.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $request_id = $_POST['request_id'];
@@ -33,10 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $update->bind_param("i", $request_id);
         $update->execute();
 
-        $historyStmt = $conn->prepare("INSERT INTO request_status_history (request_id, old_status, new_status, changed_by, remarks) VALUES (?, ?, 'Assigned', ?, ?)");
         $remarks = "Assigned to technician ID $technician_id";
-        $historyStmt->bind_param("isis", $request_id, $oldStatus, $supervisor_id, $remarks);
-        $historyStmt->execute();
+        recordStatusHistory($request_id, $oldStatus, 'Assigned', $supervisor_id, $remarks);
 
         // Notify technician
         sendNotification($technician_id, $request_id, "You have been assigned a new request.", "Dashboard");
