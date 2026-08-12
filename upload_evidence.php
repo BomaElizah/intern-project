@@ -3,29 +3,90 @@ include 'auth.php';
 requireRole(['Maintenance Officer', 'Technician']);
 include 'send_notification.php';
 include 'audit_log.php';
+include 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $request_id = $_POST['request_id'];
     $technician_id = $_SESSION['user_id'];
     $comment = $_POST['comment'];
 
-    // Handle file uploads
-    $before_photo = $_FILES['before_photo']['name'];
-    $after_photo = $_FILES['after_photo']['name'];
+    // Handle file uploads with validation and safe storage
+    $allowed_ext = ALLOWED_UPLOAD_EXT;
+    $max_size = MAX_UPLOAD_BYTES;
 
-    $upload_dir = "../assets/uploads/";
-    if (!empty($before_photo)) {
-        move_uploaded_file($_FILES['before_photo']['tmp_name'], $upload_dir . $before_photo);
-        $stmt = $conn->prepare("INSERT INTO attachments (request_id, uploaded_by, file_path, attachment_stage) VALUES (?, ?, ?, 'Before-Work')");
-        $stmt->bind_param("iis", $request_id, $technician_id, $before_photo);
-        $stmt->execute();
+    // Determine upload directory and ensure it exists
+    $upload_dir = get_upload_dir();
+    if (!is_dir($upload_dir)) {
+        if (!mkdir($upload_dir, 0755, true)) {
+            http_response_code(500);
+            echo "Failed to create upload directory.";
+            exit;
+        }
     }
-    if (!empty($after_photo)) {
-        move_uploaded_file($_FILES['after_photo']['tmp_name'], $upload_dir . $after_photo);
-        $stmt = $conn->prepare("INSERT INTO attachments (request_id, uploaded_by, file_path, attachment_stage) VALUES (?, ?, ?, 'After-Work')");
-        $stmt->bind_param("iis", $request_id, $technician_id, $after_photo);
-        $stmt->execute();
-    }
+
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+
+    $errors = [];
+    $savedFiles = [];
+
+    $handleFile = function($fieldName, $stage) use ($conn, $request_id, $technician_id, $upload_dir, $allowed_ext, $max_size, $finfo, &$errors, &$savedFiles) {
+        if (!isset($_FILES[$fieldName]) || $_FILES[$fieldName]['error'] !== UPLOAD_ERR_OK) {
+            return;
+        }
+
+        $file = $_FILES[$fieldName];
+        if ($file['size'] > $max_size) {
+            $errors[] = "$fieldName exceeds the maximum allowed size.";
+            return;
+        }
+
+        $pathinfo = pathinfo($file['name']);
+        $ext = strtolower($pathinfo['extension'] ?? '');
+        if (!in_array($ext, $allowed_ext)) {
+            $errors[] = "$fieldName has an invalid file type.";
+            return;
+        }
+
+        $mime = finfo_file($finfo, $file['tmp_name']);
+        // Basic mime checks for common image/pdf types
+        $validImageMimes = ['image/jpeg','image/png'];
+        $validPdf = 'application/pdf';
+        if (!($mime === $validPdf || in_array($mime, $validImageMimes))) {
+            $errors[] = "$fieldName failed MIME validation.";
+            return;
+        }
+
+        // Create a safe, unique filename
+        try {
+            $random = bin2hex(random_bytes(6));
+        } catch (Exception $e) {
+            $random = uniqid();
+        }
+        $safeName = time() . '_' . $random . '.' . $ext;
+
+        $target = $upload_dir . $safeName;
+        if (!move_uploaded_file($file['tmp_name'], $target)) {
+            $errors[] = "Failed to move uploaded file for $fieldName.";
+            return;
+        }
+
+        // Store web-accessible path in the DB (relative to project root)
+        $dbPath = get_upload_url_base() . $safeName;
+        $stmt = $conn->prepare("INSERT INTO attachments (request_id, uploaded_by, file_path, attachment_stage) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("iiss", $request_id, $technician_id, $dbPath, $stage);
+        if ($stmt->execute()) {
+            $savedFiles[] = $dbPath;
+        } else {
+            $errors[] = "Failed to record attachment for $fieldName.";
+            // Attempt to unlink the file we moved
+            @unlink($target);
+        }
+    };
+
+    $handleFile('before_photo', 'Before-Work');
+    $handleFile('after_photo', 'After-Work');
+
+    finfo_close($finfo);
 
     // Insert technician comment
     if (!empty($comment)) {

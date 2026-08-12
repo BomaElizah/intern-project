@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Test Submit Request</title></head>
+<body>
+  <h1>Test Submit Request (with attachments)</h1>
+  <form action="submit_request.php" method="POST" enctype="multipart/form-data">
+    <label>Title: <input name="title" value="Test request"></label><br>
+    <label>Description: <textarea name="description">Test description</textarea></label><br>
+    <label>Building: <input name="building" value="1"></label><br>
+    <label>Room: <input name="room" value="1"></label><br>
+    <label>Category: <input name="category" value="1"></label><br>
+    <label>Priority: <select name="priority"><option>Low</option><option>Medium</option></select></label><br>
+    <label>Single file: <input type="file" name="attachment"></label><br>
+    <label>Multiple files: <input type="file" name="attachments[]" multiple></label><br>
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>
