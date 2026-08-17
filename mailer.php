@@ -5,7 +5,7 @@ use PHPMailer\PHPMailer\Exception;
 
 require_once __DIR__ . '/config.php';
 
-function sendEmailSMTP($to, $toName, $subject, $body) {
+function sendEmailSMTP($to, $toName, $subject, $body, $isHtml = false) {
     // Prefer PHPMailer via Composer autoload if available
     $autoload = __DIR__ . '/vendor/autoload.php';
     if (file_exists($autoload)) {
@@ -27,7 +27,7 @@ function sendEmailSMTP($to, $toName, $subject, $body) {
             $mail->addAddress($to, $toName ?: '');
             $mail->Subject = $subject;
             $mail->Body = $body;
-            $mail->isHTML(false);
+            $mail->isHTML($isHtml);
 
             return $mail->send();
         } catch (Exception $e) {
@@ -37,7 +37,8 @@ function sendEmailSMTP($to, $toName, $subject, $body) {
     }
 
     // Fallback to mail()
-    $fromHeader = 'From: ' . (defined('MAIL_FROM_NAME') ? MAIL_FROM_NAME : '') . ' <' . (defined('MAIL_FROM_ADDRESS') ? MAIL_FROM_ADDRESS : '') . '>' . "\r\n" . 'Content-Type: text/plain; charset=UTF-8' . "\r\n";
+    $contentType = $isHtml ? 'text/html' : 'text/plain';
+    $fromHeader = 'From: ' . (defined('MAIL_FROM_NAME') ? MAIL_FROM_NAME : '') . ' <' . (defined('MAIL_FROM_ADDRESS') ? MAIL_FROM_ADDRESS : '') . '>' . "\r\n" . 'Content-Type: ' . $contentType . '; charset=UTF-8' . "\r\n";
     return @mail($to, $subject, $body, $fromHeader);
 }
 

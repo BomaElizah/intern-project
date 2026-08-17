@@ -30,22 +30,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Build SQL per report type
     switch ($report_type) {
         case 'monthly':
-            $sql = "SELECT DATE_FORMAT(mr.submitted_at, '%Y-%m') AS period, COUNT(*) AS total_requests FROM maintenance_requests mr";
+            $sql = "SELECT DATE_FORMAT(mr.submitted_at, '%Y-%m') AS period, 
+                    COUNT(*) AS total_requests,
+                    SUM(CASE WHEN status='Completed' THEN 1 ELSE 0 END) as completed,
+                    AVG(TIMESTAMPDIFF(HOUR, mr.submitted_at, mr.completed_at)) as avg_hours
+                    FROM maintenance_requests mr";
             break;
         case 'building':
-            $sql = "SELECT b.building_name AS label, COUNT(*) AS total_requests FROM maintenance_requests mr JOIN buildings b ON mr.building_id=b.building_id";
+            $sql = "SELECT b.building_name AS label, COUNT(*) AS total_requests,
+                    SUM(CASE WHEN mr.status='Completed' THEN 1 ELSE 0 END) as completed
+                    FROM maintenance_requests mr 
+                    JOIN buildings b ON mr.building_id=b.building_id";
             break;
         case 'category':
-            $sql = "SELECT c.category_name AS label, COUNT(*) AS total_requests FROM maintenance_requests mr JOIN categories c ON mr.category_id=c.category_id";
+            $sql = "SELECT c.category_name AS label, COUNT(*) AS total_requests,
+                    SUM(CASE WHEN mr.status='Completed' THEN 1 ELSE 0 END) as completed
+                    FROM maintenance_requests mr 
+                    JOIN categories c ON mr.category_id=c.category_id";
             break;
         case 'technician':
-            $sql = "SELECT u.full_name AS label, COUNT(*) AS total_requests FROM assignments a JOIN users u ON a.technician_id=u.user_id JOIN maintenance_requests mr ON a.request_id=mr.request_id";
+            $sql = "SELECT u.full_name AS label, COUNT(*) AS total_requests,
+                    SUM(CASE WHEN mr.status='Completed' THEN 1 ELSE 0 END) as completed,
+                    SUM(CASE WHEN a.is_current=TRUE THEN 1 ELSE 0 END) as active
+                    FROM assignments a 
+                    JOIN users u ON a.technician_id=u.user_id 
+                    JOIN maintenance_requests mr ON a.request_id=mr.request_id";
             break;
         case 'status':
-            $sql = "SELECT mr.status AS label, COUNT(*) AS total_requests FROM maintenance_requests mr";
+            $sql = "SELECT mr.status AS label, COUNT(*) AS total_requests,
+                    AVG(TIMESTAMPDIFF(HOUR, mr.submitted_at, NOW())) as avg_hours_open
+                    FROM maintenance_requests mr";
+            break;
+        case 'priority':
+            $sql = "SELECT mr.priority AS label, COUNT(*) AS total_requests,
+                    SUM(CASE WHEN mr.status='Completed' THEN 1 ELSE 0 END) as completed
+                    FROM maintenance_requests mr";
             break;
         default:
-            $sql = "SELECT c.category_name AS label, COUNT(*) AS total_requests FROM maintenance_requests mr JOIN categories c ON mr.category_id=c.category_id";
+            $sql = "SELECT c.category_name AS label, COUNT(*) AS total_requests,
+                    SUM(CASE WHEN mr.status='Completed' THEN 1 ELSE 0 END) as completed
+                    FROM maintenance_requests mr 
+                    JOIN categories c ON mr.category_id=c.category_id";
             break;
     }
 

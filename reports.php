@@ -46,6 +46,7 @@ $technicians = $conn->query("SELECT user_id, full_name FROM users WHERE role_id 
             <option value="category">By Category</option>
             <option value="building">By Building</option>
             <option value="technician">By Technician</option>
+            <option value="priority">By Priority</option>
             <option value="monthly">By Month</option>
             <option value="status">By Status</option>
           </select>

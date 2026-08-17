@@ -6,37 +6,15 @@ include 'mailer.php';
 function sendNotification($user_id, $request_id, $message, $type = 'Dashboard') {
     global $conn;
 
+    // Store notification in database
     $stmt = $conn->prepare("INSERT INTO notifications (user_id, request_id, message, notification_type) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("iiss", $user_id, $request_id, $message, $type);
 
     if ($stmt->execute()) {
-        // Optionally send an email when requested and enabled in config
-        if (defined('EMAIL_ENABLED') && EMAIL_ENABLED && strtolower($type) === 'email') {
-            $emailStmt = $conn->prepare("SELECT university_email, full_name FROM users WHERE user_id = ?");
-            $emailStmt->bind_param('i', $user_id);
-            $emailStmt->execute();
-            $emailResult = $emailStmt->get_result();
-            if ($emailRow = $emailResult->fetch_assoc()) {
-                $to = $emailRow['university_email'];
-                $subject = "WPU Maintenance Request Update (#" . intval($request_id) . ")";
-                $body = "Hello " . ($emailRow['full_name'] ?? '') . ",\n\n" . $message . "\n\n" . "--\nWPU Maintenance";
-
-                // If SMTP is enabled and PHPMailer is available, use it for reliable delivery
-                if (defined('SMTP_ENABLED') && SMTP_ENABLED) {
-                    $sent = sendEmailSMTP($to, $emailRow['full_name'] ?? '', $subject, $body);
-                    if (!$sent) {
-                        error_log("PHPMailer failed to send to $to for request $request_id");
-                    }
-                } else {
-                    $fromHeader = 'From: ' . (defined('MAIL_FROM_NAME') ? MAIL_FROM_NAME : '') . ' <' . (defined('MAIL_FROM_ADDRESS') ? MAIL_FROM_ADDRESS : '') . '>' . "\r\n" . 'Content-Type: text/plain; charset=UTF-8' . "\r\n";
-                    $mailSent = @mail($to, $subject, $body, $fromHeader);
-                    if (!$mailSent) {
-                        error_log("Email send failed to $to for notification (request $request_id)");
-                    }
-                }
-            }
+        // Send email if requested and enabled
+        if (strtolower($type) === 'email' && (defined('EMAIL_ENABLED') && EMAIL_ENABLED || defined('SMTP_ENABLED') && SMTP_ENABLED)) {
+            sendEmailNotification($user_id, $request_id, $message);
         }
-
         return true;
     } else {
         error_log("Notification Error: " . $stmt->error);
@@ -44,6 +22,99 @@ function sendNotification($user_id, $request_id, $message, $type = 'Dashboard') 
     }
 }
 
+function sendEmailNotification($user_id, $request_id, $message) {
+    global $conn;
+    
+    $emailStmt = $conn->prepare("SELECT university_email, full_name FROM users WHERE user_id = ?");
+    $emailStmt->bind_param('i', $user_id);
+    $emailStmt->execute();
+    $emailResult = $emailStmt->get_result();
+    
+    if (!($emailRow = $emailResult->fetch_assoc())) {
+        error_log("User email not found for user $user_id");
+        return false;
+    }
+
+    $to = $emailRow['university_email'];
+    $toName = $emailRow['full_name'] ?? '';
+    $subject = "WPU Maintenance Request Update (#" . intval($request_id) . ")";
+    $body = "Hello $toName,\n\n" . $message . "\n\n--\nWPU Maintenance Request System";
+
+    if (defined('SMTP_ENABLED') && SMTP_ENABLED) {
+        $sent = sendEmailSMTP($to, $toName, $subject, $body, false);
+    } else {
+        $sent = sendEmailSMTP($to, $toName, $subject, $body, false);
+    }
+
+    if (!$sent) {
+        error_log("Email send failed to $to for request $request_id");
+    }
+
+    return $sent;
+}
+
+function sendStyledEmailNotification($user_id, $request_id, $template_type) {
+    global $conn;
+    
+    // Include templates
+    include_once 'email_templates.php';
+    
+    $emailStmt = $conn->prepare("SELECT university_email, full_name FROM users WHERE user_id = ?");
+    $emailStmt->bind_param('i', $user_id);
+    $emailStmt->execute();
+    $emailResult = $emailStmt->get_result();
+    
+    if (!($emailRow = $emailResult->fetch_assoc())) {
+        error_log("User email not found for user $user_id");
+        return false;
+    }
+
+    $to = $emailRow['university_email'];
+    $toName = $emailRow['full_name'] ?? '';
+    
+    // Generate HTML email based on template type
+    $htmlBody = null;
+    $subject = "WPU Maintenance Request Update";
+    
+    switch($template_type) {
+        case 'submission':
+            $htmlBody = generateRequestSubmissionEmail($request_id);
+            $subject = "Request Submitted Successfully";
+            break;
+        case 'assignment':
+            $htmlBody = generateAssignmentEmail($request_id, $toName);
+            $subject = "Your Request Has Been Assigned";
+            break;
+        case 'status_update':
+            $request = getRequestDetails($request_id);
+            $htmlBody = generateStatusUpdateEmail($request_id, $request['status'] ?? '');
+            $subject = "Request Status Updated";
+            break;
+        case 'technician_assignment':
+            $htmlBody = generateTechnicianAssignmentEmail($request_id, $toName);
+            $subject = "New Work Assignment";
+            break;
+    }
+
+    if (!$htmlBody) {
+        return false;
+    }
+
+    if (defined('SMTP_ENABLED') && SMTP_ENABLED) {
+        $sent = sendEmailSMTP($to, $toName, $subject, $htmlBody, true);
+    } else {
+        $sent = sendEmailSMTP($to, $toName, $subject, $htmlBody, true);
+    }
+
+    if (!$sent) {
+        error_log("Styled email send failed to $to for request $request_id (template: $template_type)");
+    }
+
+    return $sent;
+}
+
 // Example usage
 // sendNotification(1, 10245, "Your request has been assigned to a technician.", "Email");
+// sendStyledEmailNotification(1, 10245, 'assignment');
 ?>
+

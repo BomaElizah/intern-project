@@ -19,55 +19,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Determine upload directory and ensure it exists
     $upload_dir = get_upload_dir();
-    if (!is_dir($upload_dir)) {
-        if (!mkdir($upload_dir, 0755, true)) {
-            http_response_code(500);
-            echo "Failed to create upload directory.";
-            exit;
-        }
-    }
-
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
 
     $errors = [];
     $savedFiles = [];
 
-    $handleFile = function($fieldName, $stage) use ($conn, $request_id, $technician_id, $upload_dir, $allowed_ext, $max_size, $finfo, &$errors, &$savedFiles) {
-        if (!isset($_FILES[$fieldName]) || $_FILES[$fieldName]['error'] !== UPLOAD_ERR_OK) {
+    $handleFile = function($fieldName, $stage) use ($conn, $request_id, $technician_id, $upload_dir, &$errors, &$savedFiles) {
+        if (!isset($_FILES[$fieldName])) {
             return;
         }
 
         $file = $_FILES[$fieldName];
-        if ($file['size'] > $max_size) {
-            $errors[] = "$fieldName exceeds the maximum allowed size.";
+        
+        // Validate file
+        $validation = validate_upload_file($file);
+        if (!$validation['valid']) {
+            $errors[] = "$fieldName: " . $validation['error'];
             return;
         }
 
-        $pathinfo = pathinfo($file['name']);
-        $ext = strtolower($pathinfo['extension'] ?? '');
-        if (!in_array($ext, $allowed_ext)) {
-            $errors[] = "$fieldName has an invalid file type.";
-            return;
-        }
-
-        $mime = finfo_file($finfo, $file['tmp_name']);
-        // Basic mime checks for common image/pdf types
-        $validImageMimes = ['image/jpeg','image/png'];
-        $validPdf = 'application/pdf';
-        if (!($mime === $validPdf || in_array($mime, $validImageMimes))) {
-            $errors[] = "$fieldName failed MIME validation.";
-            return;
-        }
-
-        // Create a safe, unique filename
-        try {
-            $random = bin2hex(random_bytes(6));
-        } catch (Exception $e) {
-            $random = uniqid();
-        }
-        $safeName = time() . '_' . $random . '.' . $ext;
-
+        // Generate safe filename
+        $safeName = generate_safe_filename($file['name']);
         $target = $upload_dir . $safeName;
+        
         if (!move_uploaded_file($file['tmp_name'], $target)) {
             $errors[] = "Failed to move uploaded file for $fieldName.";
             return;
@@ -79,17 +52,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bind_param("iiss", $request_id, $technician_id, $dbPath, $stage);
         if ($stmt->execute()) {
             $savedFiles[] = $dbPath;
+            // Write audit log
+            writeAuditLog($technician_id, "Uploaded evidence: $stage", "attachments", $request_id, $_SERVER['REMOTE_ADDR']);
         } else {
             $errors[] = "Failed to record attachment for $fieldName.";
             // Attempt to unlink the file we moved
             @unlink($target);
         }
     };
-
-    $handleFile('before_photo', 'Before-Work');
-    $handleFile('after_photo', 'After-Work');
-
-    finfo_close($finfo);
 
     // Insert technician comment
     if (!empty($comment)) {
