@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+<rect width="1200" height="760" fill="#ffffff"/>
+<style>text{font-family:Arial,sans-serif;fill:#202531} .title{font-size:28px;font-weight:bold;fill:#0B1D6B}.actor{font-size:17px;font-weight:bold}.uc{font-size:15px}.line{stroke:#0B1D6B;stroke-width:2;fill:none}.boundary{fill:#f5f6fa;stroke:#0B1D6B;stroke-width:3}.ellipse{fill:#fff;stroke:#0B1D6B;stroke-width:2}</style>
+<text x="600" y="42" text-anchor="middle" class="title">WPU Maintenance Request System - Use Case Diagram</text>
+<rect x="235" y="75" width="730" height="635" rx="8" class="boundary"/>
+<text x="600" y="105" text-anchor="middle" class="actor">System Boundary</text>
+<ellipse cx="430" cy="165" rx="130" ry="30" class="ellipse"/><text x="430" y="171" text-anchor="middle" class="uc">Register / Sign In</text>
+<ellipse cx="760" cy="165" rx="130" ry="30" class="ellipse"/><text x="760" y="171" text-anchor="middle" class="uc">Reset Password</text>
+<ellipse cx="430" cy="250" rx="130" ry="30" class="ellipse"/><text x="430" y="256" text-anchor="middle" class="uc">Submit Request</text>
+<ellipse cx="760" cy="250" rx="130" ry="30" class="ellipse"/><text x="760" y="256" text-anchor="middle" class="uc">Track Request</text>
+<ellipse cx="430" cy="340" rx="130" ry="30" class="ellipse"/><text x="430" y="346" text-anchor="middle" class="uc">Assign / Reassign Job</text>
+<ellipse cx="760" cy="340" rx="130" ry="30" class="ellipse"/><text x="760" y="346" text-anchor="middle" class="uc">Update Job Progress</text>
+<ellipse cx="430" cy="430" rx="130" ry="30" class="ellipse"/><text x="430" y="436" text-anchor="middle" class="uc">Upload Work Evidence</text>
+<ellipse cx="760" cy="430" rx="130" ry="30" class="ellipse"/><text x="760" y="436" text-anchor="middle" class="uc">Manage Users / Settings</text>
+<ellipse cx="600" cy="525" rx="130" ry="30" class="ellipse"/><text x="600" y="531" text-anchor="middle" class="uc">View Reports / Export</text>
+<ellipse cx="600" cy="625" rx="130" ry="30" class="ellipse"/><text x="600" y="631" text-anchor="middle" class="uc">Receive Dashboard Alerts</text>
+<g class="line">
+<path d="M170 150 L300 165"/><path d="M170 330 L300 250"/><path d="M170 430 L300 250"/><path d="M170 540 L300 250"/>
+<path d="M1030 180 L890 165"/><path d="M1030 300 L890 340"/><path d="M1030 430 L890 340"/><path d="M1030 560 L730 525"/>
+<path d="M600 710 L600 655"/>
+</g>
+<g class="actor"><text x="130" y="145" text-anchor="middle">Student / Staff</text><text x="130" y="165" text-anchor="middle">/ Academic</text><text x="1070" y="175" text-anchor="middle">Technician</text><text x="1070" y="295" text-anchor="middle">Supervisor</text><text x="1070" y="425" text-anchor="middle">Administrator</text><text x="600" y="742" text-anchor="middle">All authenticated users</text></g>
+</svg>

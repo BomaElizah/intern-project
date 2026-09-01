@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+<rect width="1200" height="900" fill="#ffffff"/>
+<style>text{font-family:Arial,sans-serif;fill:#202531}.title{font-size:28px;font-weight:bold;fill:#0B1D6B}.box{fill:#f5f6fa;stroke:#0B1D6B;stroke-width:2}.action{fill:#fff3d2;stroke:#D9A900;stroke-width:2}.decision{fill:#def3e4;stroke:#1E8A4C;stroke-width:2}.label{font-size:16px}.small{font-size:14px}.arrow{stroke:#0B1D6B;stroke-width:2;fill:none;marker-end:url(#arrow)}</style>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#0B1D6B"/></marker></defs>
+<text x="600" y="42" text-anchor="middle" class="title">WPU Maintenance Request System - Request Flowchart</text>
+<rect x="475" y="70" width="250" height="55" rx="27" class="action"/><text x="600" y="104" text-anchor="middle" class="label">User signs in</text>
+<path d="M600 125 L600 165" class="arrow"/>
+<rect x="450" y="165" width="300" height="60" rx="8" class="box"/><text x="600" y="202" text-anchor="middle" class="label">Submit request details</text>
+<path d="M600 225 L600 265" class="arrow"/>
+<rect x="465" y="265" width="270" height="60" rx="8" class="box"/><text x="600" y="302" text-anchor="middle" class="label">Validate fields and photos</text>
+<path d="M600 325 L600 365" class="arrow"/>
+<polygon points="600,365 730,425 600,485 470,425" class="decision"/><text x="600" y="420" text-anchor="middle" class="label">Valid?</text>
+<path d="M470 425 L300 425 L300 365" class="arrow"/><text x="375" y="414" class="small">No</text>
+<rect x="175" y="305" width="250" height="60" rx="8" class="action"/><text x="300" y="342" text-anchor="middle" class="label">Show validation errors</text>
+<path d="M300 365 L300 790 L475 790" class="arrow"/>
+<path d="M730 425 L850 425" class="arrow"/><text x="770" y="414" class="small">Yes</text>
+<rect x="850" y="395" width="250" height="60" rx="8" class="box"/><text x="975" y="432" text-anchor="middle" class="label">Save request and history</text>
+<path d="M975 455 L975 505" class="arrow"/>
+<rect x="850" y="505" width="250" height="60" rx="8" class="action"/><text x="975" y="542" text-anchor="middle" class="label">Notify supervisor</text>
+<path d="M975 565 L975 615" class="arrow"/>
+<rect x="850" y="615" width="250" height="60" rx="8" class="box"/><text x="975" y="652" text-anchor="middle" class="label">Supervisor assigns technician</text>
+<path d="M850 675 L730 735" class="arrow"/>
+<rect x="475" y="705" width="250" height="60" rx="8" class="box"/><text x="600" y="742" text-anchor="middle" class="label">Technician updates job</text>
+<path d="M600 765 L600 805" class="arrow"/>
+<rect x="475" y="805" width="250" height="55" rx="27" class="action"/><text x="600" y="839" text-anchor="middle" class="label">Complete and notify requester</text>
+</svg>
