@@ -50,6 +50,29 @@ removed, or reinterpreted. The corrected document is
   dashboard-only. Email addresses are retained for account identity,
   contact links, and password-reset verification.
 
+## Setup (Docker Compose)
+
+Docker Compose is the recommended local setup. It provides PHP with the
+`pdo_mysql` extension, starts MySQL, imports the schema and seed data on the
+first run, and keeps database data in a named Docker volume.
+
+Requirements: Docker Desktop, Docker Engine, or Docker Compose.
+
+From the project root:
+
+```bash
+docker compose up --build
+```
+
+Open `http://localhost:8000/` in a browser. The default administrator account
+is `admin@wpu.ac.pg` with password `Admin@12345`; change this password after
+signing in.
+
+Stop the services with `docker compose down`. To remove the database and
+re-import the starter data on the next run, use `docker compose down -v`.
+See [`docs/DOCKER_SETUP.md`](docs/DOCKER_SETUP.md) for troubleshooting and
+port-change instructions.
+
 ## Setup (XAMPP)
 
 1. Copy this whole `wpu_maintenance_system` folder into your XAMPP

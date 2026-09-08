@@ -5,10 +5,10 @@
  */
 
 // ---- Database connection settings (XAMPP defaults — Section 3.5) ----
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'wpu_maintenance');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_HOST', getenv('DB_HOST') ?: '127.0.0.1');
+define('DB_NAME', getenv('DB_NAME') ?: 'wpu_maintenance');
+define('DB_USER', getenv('DB_USER') ?: 'root');
+define('DB_PASS', getenv('DB_PASS') ?: '');
 
 // ---- Application settings ----
 define('APP_NAME', 'WPU Maintenance Request System');
